@@ -2,11 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-[build.environment]
-  # The Supabase publishable key is meant to ship in the browser bundle,
-  # so exclude it from Netlify's secret scanning.
-  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY"
-
 [[redirects]]
   from = "/*"
   to = "/index.html"

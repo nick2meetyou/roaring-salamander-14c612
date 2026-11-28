@@ -1,35 +1,34 @@
-# Dashboard การขนส่งกระดาษคำตอบ
+# Dashboard การขนส่งข้อสอบ
 
-แดชบอร์ด React + Vite ที่จัดหน้าตาให้ใกล้ภาพอ้างอิง พร้อม CRUD (เพิ่ม/แก้ไข/ลบ), ค้นหา, กรองสถานะ, export CSV และ responsive layout
+โปรเจกต์ React + Vite สำหรับแสดงและแก้ไขข้อมูลจาก `รายละเอียดรถขนส่งปัญหาข้อสอบ.xlsx`
 
-## 1) เปิดในเครื่อง
+## ฟังก์ชัน
+- แยกตาราง 2 ชุด: รถขนส่งข้อสอบขาไป และรถขนส่งข้อสอบที่ใช้แล้ว/ขากลับ
+- เพิ่ม แก้ไข และลบรายการทุกคอลัมน์
+- เรียงลำดับรายการด้วยปุ่มลูกศรขึ้น/ลง
+- แก้ไขชื่อหัวคอลัมน์แต่ละตารางได้
+- แก้ไขชื่อ Dashboard คำอธิบาย และชื่อหัวข้อตารางได้
+- ส่งออกข้อมูลของแต่ละตารางเป็น CSV
+- บันทึกใน localStorage หากยังไม่ตั้งค่า Supabase
+- รองรับ Supabase สำหรับแชร์ข้อมูลระหว่างอุปกรณ์
+
+## ตั้งค่า Supabase
+1. เปิด Supabase project > SQL Editor > New query
+2. วางและ Run เนื้อหาทั้งหมดจาก `supabase.sql`
+3. ตั้งค่า Environment Variables ใน Netlify:
+   - `VITE_SUPABASE_URL` = Project URL
+   - `VITE_SUPABASE_ANON_KEY` = Publishable/anon key
+4. Build และ Deploy โปรเจกต์ใหม่
+
+> คำเตือน: ไฟล์ Excel มีข้อมูลส่วนบุคคล เช่น เลขประจำตัวประชาชน เลขใบขับขี่ และเบอร์โทรศัพท์ของพนักงานขับรถ ไฟล์ `supabase.sql` นี้ตั้ง policy แบบเปิดสำหรับทดสอบบนเว็บที่ยังไม่มีระบบล็อกอิน ผู้ที่เข้าถึง public API อาจอ่าน/แก้ไข/ลบข้อมูลได้ ห้ามใช้กับข้อมูลจริงจนกว่าจะเพิ่มระบบ Authentication และกำหนด RLS จำกัดสิทธิ์ผู้ใช้ให้เหมาะสม
+
+## Build
 ```bash
 npm install
-npm run dev
+npm run build
 ```
 
-ถ้าไม่ตั้งค่า Supabase ระบบจะใช้ `localStorage` ของ browser เป็นโหมดสาธิต ข้อมูลจะคงอยู่ใน browser/เครื่องนั้นเท่านั้น
+ผลลัพธ์สำหรับเผยแพร่คือโฟลเดอร์ `dist` (กำหนดไว้ใน `netlify.toml`).
 
-## 2) ใช้ฐานข้อมูลร่วมกัน (แนะนำสำหรับการใช้งานจริง)
-1. สร้างโปรเจกต์ที่ [Supabase](https://supabase.com/)
-2. ไปที่ SQL Editor แล้วรันไฟล์ `supabase.sql`
-3. คัดลอก Project URL และ anon/public key จาก Project Settings → API
-4. สร้างไฟล์ `.env` จาก `.env.example` แล้วกำหนด:
-   ```
-   VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-   VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-   ```
-5. `npm install` และ `npm run dev` อีกครั้ง ข้อมูลจะอ่าน/เขียนผ่าน Supabase
-6. นำ URL และ anon key เดียวกันไปตั้งใน Netlify: Site configuration → Environment variables โดยใช้ชื่อ `VITE_SUPABASE_URL` และ `VITE_SUPABASE_ANON_KEY` จากนั้น trigger deploy ใหม่
-
-**ความปลอดภัย:** SQL ตัวอย่างเปิด CRUD ให้ `anon` เพื่อให้ทดลองได้ง่ายเท่านั้น ไม่ควรใช้กับข้อมูลปฏิบัติการจริงโดยไม่เพิ่มระบบ Authentication และ Row Level Security ที่จำกัดสิทธิ์ผู้ใช้ ห้ามนำ `service_role` key ไปไว้ใน frontend หรือ Netlify environment variables ที่ขึ้นต้นด้วย `VITE_`.
-
-## 3) Deploy บน Netlify
-- อัปโหลดโฟลเดอร์นี้ขึ้น GitHub
-- Netlify → Add new site → Import an existing project → เลือก repository
-- Build command: `npm run build`
-- Publish directory: `dist`
-- ตั้ง environment variables ตามข้อ 2 (หากใช้ Supabase) แล้ว Deploy
-
-## หมายเหตุ
-ข้อมูลตัวอย่างถูกจำลองตามข้อความที่อ่านได้จากภาพ ไม่ใช่ข้อมูลสดจาก GPS จริง และเวลา/สถานะในภาพจะไม่อัปเดตอัตโนมัติจนกว่าจะมีการแก้ไขข้อมูลหรือเชื่อมต่อระบบต้นทาง
+## หมายเหตุเรื่องวันที่
+เซลล์วันที่ในไฟล์ Excel ถูกเก็บเป็นปี 1969 แต่ชื่อเอกสารระบุวันที่ พ.ย.69 จึงแสดงวันที่เป็นปีสั้น `69` ตามบริบทของเอกสาร ผู้ใช้สามารถแก้ไขค่าดังกล่าวในหน้าจอแก้ไขรายการได้
